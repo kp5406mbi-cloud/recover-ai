@@ -11,10 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/recovery-attempts")
-@CrossOrigin(origins = {
-        "http://localhost:5173",
-        "http://localhost:5175"
-})
 public class RecoveryAttemptController {
 
     private final RecoveryAttemptService recoveryAttemptService;
