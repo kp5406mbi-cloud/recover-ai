@@ -1421,6 +1421,13 @@ function SimulationPage() {
   const [running, setRunning] = useState(false);
   const [simulationError, setSimulationError] = useState("");
 
+  const [customerId, setCustomerId] = useState("recruiter_demo");
+  const [amount, setAmount] = useState("12999");
+  const [paymentOutcome, setPaymentOutcome] = useState("FAILED");
+  const [failureReason, setFailureReason] = useState("INSUFFICIENT_FUNDS");
+  const [creatingPayment, setCreatingPayment] = useState(false);
+  const [createdPayment, setCreatedPayment] = useState(null);
+
   const runSimulation = async () => {
     try {
       setRunning(true);
@@ -1444,6 +1451,50 @@ function SimulationPage() {
     }
   };
 
+  const createTestPayment = async () => {
+    try {
+      setCreatingPayment(true);
+      setSimulationError("");
+      setCreatedPayment(null);
+
+      const paymentBody = {
+        customerId,
+        amount: Number(amount),
+        currency: "INR",
+        status: paymentOutcome,
+        failureReason:
+          paymentOutcome === "FAILED"
+            ? failureReason
+            : null,
+        retryCount: 0,
+      };
+
+      const response = await axios.post(
+        `${API}/payments`,
+        paymentBody
+      );
+
+      setCreatedPayment(response.data);
+
+      if (paymentOutcome === "FAILED") {
+        await axios.post(
+          `${API}/payments/${response.data.id}/classify`
+        );
+      }
+
+      return response.data;
+    } catch (err) {
+      console.error("Test payment creation error:", err);
+
+      setSimulationError(
+        err?.response?.data?.error ||
+        "Unable to create test payment."
+      );
+    } finally {
+      setCreatingPayment(false);
+    }
+  };
+
   const formatCurrency = (value) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -1453,6 +1504,150 @@ function SimulationPage() {
 
   return (
     <section className="simulation-page">
+
+      <div className="panel simulation-breakdown" style={{ marginBottom: "20px" }}>
+        <div className="panel-header">
+          <div>
+            <div className="simulation-eyebrow">
+              RECRUITER DEMO
+            </div>
+
+            <h2>Test a Payment Recovery</h2>
+
+            <p>
+              Create a synthetic payment and observe how RecoverAI
+              handles successful and failed payment scenarios.
+            </p>
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "16px",
+            marginTop: "20px",
+          }}
+        >
+          <label>
+            <span style={{ display: "block", marginBottom: "6px" }}>
+              Customer ID
+            </span>
+
+            <input
+              value={customerId}
+              onChange={(event) =>
+                setCustomerId(event.target.value)
+              }
+              disabled={creatingPayment}
+              placeholder="recruiter_demo"
+            />
+          </label>
+
+          <label>
+            <span style={{ display: "block", marginBottom: "6px" }}>
+              Amount (INR)
+            </span>
+
+            <input
+              type="number"
+              min="1"
+              value={amount}
+              onChange={(event) =>
+                setAmount(event.target.value)
+              }
+              disabled={creatingPayment}
+            />
+          </label>
+
+          <label>
+            <span style={{ display: "block", marginBottom: "6px" }}>
+              Payment Outcome
+            </span>
+
+            <select
+              value={paymentOutcome}
+              onChange={(event) =>
+                setPaymentOutcome(event.target.value)
+              }
+              disabled={creatingPayment}
+            >
+              <option value="FAILED">Failed</option>
+              <option value="SUCCESS">Successful</option>
+            </select>
+          </label>
+
+          {paymentOutcome === "FAILED" && (
+            <label>
+              <span style={{ display: "block", marginBottom: "6px" }}>
+                Failure Reason
+              </span>
+
+              <select
+                value={failureReason}
+                onChange={(event) =>
+                  setFailureReason(event.target.value)
+                }
+                disabled={creatingPayment}
+              >
+                <option value="INSUFFICIENT_FUNDS">
+                  Insufficient Funds
+                </option>
+                <option value="CARD_DECLINED">
+                  Card Declined
+                </option>
+                <option value="NETWORK_ERROR">
+                  Network Error
+                </option>
+                <option value="EXPIRED_CARD">
+                  Expired Card
+                </option>
+              </select>
+            </label>
+          )}
+        </div>
+
+        <div style={{ marginTop: "20px" }}>
+          <button
+            className="simulation-run-button"
+            onClick={createTestPayment}
+            disabled={
+              creatingPayment ||
+              !customerId.trim() ||
+              !amount ||
+              Number(amount) <= 0
+            }
+          >
+            <FlaskConical
+              size={17}
+              className={creatingPayment ? "spin" : ""}
+            />
+
+            {creatingPayment
+              ? "Creating..."
+              : "Simulate Payment"}
+          </button>
+        </div>
+
+        {createdPayment && (
+          <div
+            className="simulation-note"
+            style={{ marginTop: "20px" }}
+          >
+            <CheckCircle2 size={16} />
+
+            <span>
+              Payment #{createdPayment.id} created as{" "}
+              <strong>
+                {createdPayment.status}
+              </strong>
+              .
+              {createdPayment.status === "FAILED" &&
+                " Recovery analysis has been triggered."}
+            </span>
+          </div>
+        )}
+      </div>
 
       <div className="simulation-hero panel">
         <div>
@@ -1830,6 +2025,9 @@ function StatusBadge({ status }) {
 }
 
 export default App;
+
+
+
 
 
 
