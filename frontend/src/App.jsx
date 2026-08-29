@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import {
   Activity,
@@ -68,6 +68,25 @@ function App() {
   const refresh = async () => {
     setRefreshing(true);
     await loadDashboard();
+  };
+
+  const executeAttempt = async (attempt) => {
+    try {
+      setError("");
+
+      await axios.post(
+        `${API}/recovery-attempts/${attempt.id}/execute`
+      );
+
+      await loadDashboard();
+    } catch (err) {
+      console.error("Recovery execution error:", err);
+
+      setError(
+        err?.response?.data?.error ||
+        "Unable to execute recovery attempt."
+      );
+    }
   };
 
   const classifyPayment = async (payment) => {
@@ -473,6 +492,7 @@ function App() {
           <RecoveryAttemptsPage
             attempts={attempts}
             formatDate={formatDate}
+            onExecute={executeAttempt}
           />
         ) : activePage === "manual-review" ? (
           <ManualReviewPage
@@ -952,6 +972,7 @@ function App() {
 function RecoveryAttemptsPage({
   attempts,
   formatDate,
+  onExecute,
 }) {
   const successful = attempts.filter(
     (attempt) => attempt.status === "SUCCESS"
@@ -1027,6 +1048,7 @@ function RecoveryAttemptsPage({
                   <th>Status</th>
                   <th>Result</th>
                   <th>Executed</th>
+                  <th></th>
                 </tr>
               </thead>
 
@@ -1065,6 +1087,17 @@ function RecoveryAttemptsPage({
                           attempt.executedAt ||
                             attempt.scheduledAt ||
                             attempt.createdAt
+                        )}
+                      </td>
+
+                      <td>
+                        {attempt.status === "SCHEDULED" && (
+                          <button
+                            className="details-button"
+                            onClick={() => onExecute(attempt)}
+                          >
+                            Execute
+                          </button>
                         )}
                       </td>
                     </tr>
@@ -1797,6 +1830,11 @@ function StatusBadge({ status }) {
 }
 
 export default App;
+
+
+
+
+
 
 
 
