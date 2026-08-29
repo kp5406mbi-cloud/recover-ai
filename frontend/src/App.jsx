@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import {
   Activity,
@@ -404,24 +404,30 @@ function App() {
               }
             </div>
             <h1>
-              {
-                activePage === "dashboard"
-                  ? "Recovery Overview"
-                  : activePage === "payments"
-                    ? "Payments"
-                    : activePage === "recovery-attempts"
-                      ? "Recovery Attempts"
-                      : activePage === "manual-review"
-                        ? "Manual Review"
-                        : "Recovery Simulation"
-              }
-            </h1>
+  {
+    activePage === "dashboard"
+      ? "Recovery Overview"
+      : activePage === "payments"
+        ? "Payments"
+        : activePage === "recovery-attempts"
+          ? "Recovery Attempts"
+          : activePage === "manual-review"
+            ? "Manual Review"
+            : activePage === "simulation"
+              ? "Recovery Simulation"
+              : activePage === "system-health"
+                ? "System Health"
+                : "Recovery Overview"
+  }
+</h1>
             <p>
               {activePage === "dashboard"
                 ? "Monitor payment failures and automated recovery activity."
                 : activePage === "simulation"
                   ? "Run controlled payment-failure scenarios and evaluate recovery outcomes."
-                  : "Review payment records and analyze recovery decisions."}
+                  : activePage === "system-health"
+                    ? "Monitor RecoverAI service connectivity and operational status."
+                    : "Review payment records and analyze recovery decisions."}
             </p>
           </div>
 
@@ -753,7 +759,7 @@ function App() {
 
                       <div className="timeline-content">
                         <div className="timeline-title">
-                          Payment #{attempt.paymentId} · Attempt #{attempt.attemptNumber}
+                          Payment #{attempt.paymentId} � Attempt #{attempt.attemptNumber}
                           <StatusBadge
                             status={attempt.status}
                           />
@@ -1791,6 +1797,9 @@ function StatusBadge({ status }) {
 }
 
 export default App;
+
+
+
 
 
 
