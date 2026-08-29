@@ -759,7 +759,7 @@ function App() {
 
                       <div className="timeline-content">
                         <div className="timeline-title">
-                          Payment #{attempt.paymentId} � Attempt #{attempt.attemptNumber}
+                          Payment #{attempt.paymentId} - Attempt #{attempt.attemptNumber}
                           <StatusBadge
                             status={attempt.status}
                           />
