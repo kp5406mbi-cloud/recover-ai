@@ -6,14 +6,9 @@ The system provides an operational dashboard for monitoring payment health, reco
 
 ## Live Demo
 
-**Frontend:**  
-https://recover-ai-frontend-xin1.onrender.com
+https://recover-ai-frontend-xjn1.onrender.com
 
-**Backend:**  
-https://recover-ai-db7u.onrender.com
 
-**Backend Health:**  
-https://recover-ai-db7u.onrender.com/actuator/health
 
 
 
