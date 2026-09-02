@@ -2087,3 +2087,17 @@ tr:hover td {
   border-color: #8b5cf6;
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.12);
 }
+
+/* Recruiter demo form spacing */
+.simulation-breakdown > div:last-child {
+  padding: 0 20px 20px;
+}
+
+/* Recruiter demo grid spacing */
+.simulation-breakdown label {
+  padding-left: 20px;
+}
+
+.simulation-breakdown label:first-child {
+  padding-left: 20px;
+}
