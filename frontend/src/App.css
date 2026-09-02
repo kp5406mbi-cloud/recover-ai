@@ -839,6 +839,47 @@ tr:hover td {
 }
 
 /* =========================================================
+   AI DECISION - CONTEXT
+   ========================================================= */
+
+.decision-context-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.decision-context-grid > div {
+  padding: 14px;
+  border: 1px solid #292d38;
+  border-radius: 9px;
+  background: #14171f;
+}
+
+.decision-context-grid span {
+  display: block;
+  margin-bottom: 6px;
+  color: #606675;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.decision-context-grid p {
+  margin: 0;
+  color: #9298a6;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.decision-context-grid strong {
+  display: block;
+  color: #d7dae2;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+/* =========================================================
    AI DECISION - CONFIDENCE
    ========================================================= */
 
@@ -1810,4 +1851,239 @@ tr:hover td {
   .simulation-attempt-stats {
     grid-template-columns: 1fr;
   }
+}
+
+/* =========================================================
+   SELECT CONTROLS
+   ========================================================= */
+
+.simulation-select {
+  min-height: 40px;
+  padding: 0 12px;
+
+  border: 1px solid #292d38;
+  border-radius: 8px;
+
+  background-color: #14171f;
+  color: #d7dae2;
+
+  font-size: 11px;
+  font-family: inherit;
+
+  outline: none;
+  cursor: pointer;
+}
+
+.simulation-select:hover {
+  border-color: #4a3b6b;
+}
+
+.simulation-select:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.12);
+}
+
+.simulation-select option {
+  background: #14171f;
+  color: #d7dae2;
+}
+
+.required {
+  color: #a78bfa;
+}
+
+/* =========================================================
+   FORM CONTROLS
+   ========================================================= */
+
+.simulation-select {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #292d38;
+  border-radius: 8px;
+  background-color: #14171f;
+  color: #d7dae2;
+  font-size: 11px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+}
+
+.simulation-select:hover {
+  border-color: #4a3b6b;
+}
+
+.simulation-select:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.12);
+}
+
+.simulation-select option {
+  background-color: #14171f;
+  color: #d7dae2;
+}
+
+.payment-search {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #292d38;
+  border-radius: 8px;
+  background-color: #14171f;
+  color: #d7dae2;
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.payment-search::placeholder {
+  color: #6f7482;
+}
+
+.payment-search:hover {
+  border-color: #4a3b6b;
+}
+
+.payment-search:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.12);
+}
+
+/* Payment search input */
+.payment-search-input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #d7dae2;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.payment-search-input::placeholder {
+  color: #6f7482;
+}
+
+.payment-search-input:focus {
+  outline: none;
+}
+
+/* Improve search placeholder visibility */
+.payment-search-input {
+  color: #d7dae2;
+}
+
+.payment-search-input::placeholder {
+  color: #8b93a3;
+  opacity: 1;
+}
+
+.payment-search-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 40px;
+  padding: 0 4px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #d7dae2;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.payment-search-input::placeholder {
+  color: #8b93a3;
+  opacity: 1;
+  white-space: nowrap;
+}
+
+/* Final payment search layout fix */
+.payment-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 14px;
+}
+
+.payment-search-input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #d7dae2;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.payment-search-input::placeholder {
+  color: #8b93a3;
+  opacity: 1;
+  white-space: nowrap;
+}
+
+/* Simulation form inputs */
+.simulation-card input,
+.simulation-card input[type="number"] {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #292d38;
+  border-radius: 8px;
+  background-color: #14171f;
+  color: #d7dae2;
+  font-size: 11px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.simulation-card input::placeholder {
+  color: #8b93a3;
+  opacity: 1;
+}
+
+.simulation-card input:hover {
+  border-color: #4a3b6b;
+}
+
+.simulation-card input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.12);
+}
+
+/* Recruiter demo form inputs */
+.simulation-breakdown input {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #292d38;
+  border-radius: 8px;
+  background-color: #14171f;
+  color: #d7dae2;
+  font-size: 11px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.simulation-breakdown input::placeholder {
+  color: #8b93a3;
+  opacity: 1;
+}
+
+.simulation-breakdown input:hover {
+  border-color: #4a3b6b;
+}
+
+.simulation-breakdown input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.12);
 }

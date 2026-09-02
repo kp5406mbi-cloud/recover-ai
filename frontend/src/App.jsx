@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import {
   Activity,
@@ -931,9 +931,45 @@ function App() {
                   </strong>
                 </div>
 
+                <div className="decision-context-grid">
+                  <div>
+                    <span>Diagnosis</span>
+                    <p>{decision.diagnosis || "N/A"}</p>
+                  </div>
+
+                  <div>
+                    <span>Recommended Action</span>
+                    <p>{decision.recommendedAction || "N/A"}</p>
+                  </div>
+
+                  <div>
+                    <span>Risk Level</span>
+                    <strong>{decision.riskLevel || "N/A"}</strong>
+                  </div>
+
+                  <div>
+                    <span>Policy Status</span>
+                    <strong>{decision.policyStatus || "N/A"}</strong>
+                  </div>
+
+                  <div>
+                    <span>Max Attempts</span>
+                    <strong>{decision.maxAttempts ?? "N/A"}</strong>
+                  </div>
+
+                  <div>
+                    <span>Retry Delay</span>
+                    <strong>
+                      {decision.retryDelaySeconds != null
+                        ? `${decision.retryDelaySeconds}s`
+                        : "N/A"}
+                    </strong>
+                  </div>
+                </div>
+
                 <div className="confidence">
                   <div className="confidence-header">
-                    <span>Confidence</span>
+                    <span>Decision Confidence</span>
                     <strong>
                       {decision.confidence != null
                         ? `${(
@@ -957,7 +993,7 @@ function App() {
                 </div>
 
                 <div className="decision-reason">
-                  <span>Reasoning</span>
+                  <span>Why this decision?</span>
                   <p>{decision.reason || "N/A"}</p>
                 </div>
               </div>
@@ -1531,11 +1567,12 @@ function SimulationPage() {
         >
           <label>
             <span style={{ display: "block", marginBottom: "6px" }}>
-              Customer ID
+              Customer ID <span className="required">*</span>
             </span>
 
             <input
               value={customerId}
+              required
               onChange={(event) =>
                 setCustomerId(event.target.value)
               }
@@ -1546,12 +1583,13 @@ function SimulationPage() {
 
           <label>
             <span style={{ display: "block", marginBottom: "6px" }}>
-              Amount (INR)
+              Amount (INR) <span className="required">*</span>
             </span>
 
             <input
               type="number"
               min="1"
+              required
               value={amount}
               onChange={(event) =>
                 setAmount(event.target.value)
@@ -1565,7 +1603,7 @@ function SimulationPage() {
               Payment Outcome
             </span>
 
-            <select
+            <select className="simulation-select"
               value={paymentOutcome}
               onChange={(event) =>
                 setPaymentOutcome(event.target.value)
@@ -1583,7 +1621,7 @@ function SimulationPage() {
                 Failure Reason
               </span>
 
-              <select
+              <select className="simulation-select"
                 value={failureReason}
                 onChange={(event) =>
                   setFailureReason(event.target.value)
@@ -1664,7 +1702,7 @@ function SimulationPage() {
         </div>
 
         <div className="simulation-controls">
-          <select
+          <select className="simulation-select"
             value={count}
             onChange={(event) =>
               setCount(Number(event.target.value))
@@ -1867,12 +1905,13 @@ function PaymentsPage({
           <input
             value={search}
             onChange={(event) => onSearch(event.target.value)}
-            placeholder="Search payment, customer, or failure reason"
+            className="payment-search-input"
+            placeholder="Search payments, customers, or failure reasons"
           />
         </div>
 
         <select
-          className="status-filter"
+          className="simulation-select status-filter"
           value={status}
           onChange={(event) => onStatus(event.target.value)}
         >
@@ -2025,6 +2064,9 @@ function StatusBadge({ status }) {
 }
 
 export default App;
+
+
+
 
 
 
