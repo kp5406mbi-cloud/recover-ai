@@ -1041,10 +1041,10 @@ function RecoveryAttemptsPage({
         />
 
         <StatCard
-          title="Failed"
+          title="Failed Attempts"
           value={failed}
           icon={<XCircle size={20} />}
-          description="Unsuccessful attempts"
+          description="Unsuccessful recovery attempts"
           danger
         />
 
@@ -2064,6 +2064,7 @@ function StatusBadge({ status }) {
 }
 
 export default App;
+
 
 
 
