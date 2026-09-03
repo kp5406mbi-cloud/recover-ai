@@ -1833,7 +1833,7 @@ function SimulationPage() {
                   <XCircle size={20} />
 
                   <div>
-                    <span>Unrecovered</span>
+                    <span>Retry Exhausted</span>
                     <strong>{result.unrecoveredPayments}</strong>
                   </div>
                 </div>
