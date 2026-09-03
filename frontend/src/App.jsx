@@ -959,7 +959,7 @@ function App() {
 
                   <div>
                     <span>EXECUTION DELAY</span>
-                    <strong>
+                    <strong className="execution-delay-value">
                       {decision.retryDelaySeconds != null
                         ? `${decision.retryDelaySeconds}s`
                         : "N/A"}
@@ -2064,42 +2064,3 @@ function StatusBadge({ status }) {
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

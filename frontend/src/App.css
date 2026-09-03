@@ -2101,3 +2101,5 @@ tr:hover td {
 .simulation-breakdown label:first-child {
   padding-left: 20px;
 }
+
+.execution-delay-value { text-transform: none !important; }
