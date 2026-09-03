@@ -2102,4 +2102,5 @@ tr:hover td {
   padding-left: 20px;
 }
 
-.execution-delay-value { text-transform: none !important; }
+strong.execution-delay-value { text-transform: none !important; }
+
