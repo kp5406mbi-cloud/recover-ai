@@ -958,7 +958,7 @@ function App() {
                   </div>
 
                   <div>
-                    <span>Retry Delay</span>
+                    <span>EXECUTION DELAY</span>
                     <strong>
                       {decision.retryDelaySeconds != null
                         ? `${decision.retryDelaySeconds}s`
