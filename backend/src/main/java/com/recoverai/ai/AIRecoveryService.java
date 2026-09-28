@@ -6,6 +6,7 @@ import com.recoverai.entity.Payment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 
 @Service
@@ -169,13 +170,8 @@ public class AIRecoveryService {
 
         try {
 
-            String response = restClient.post()
-                    .uri("/models/{model}:generateContent", model)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header("x-goog-api-key", apiKey)
-                    .body(requestBody)
-                    .retrieve()
-                    .body(String.class);
+            // Gemini request with retry handling for temporary 503 errors
+            String response = callGeminiWithRetry(requestBody);
 
             JsonNode root =
                     objectMapper.readTree(response);
@@ -251,5 +247,58 @@ public class AIRecoveryService {
                     e
             );
         }
+    }
+
+    /**
+     * Calls Gemini and retries temporary 503 Service Unavailable
+     * responses a limited number of times.
+     */
+    private String callGeminiWithRetry(String requestBody) {
+
+        int maxAttempts = 3;
+
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+
+            try {
+
+                return restClient.post()
+                        .uri(
+                                "/models/{model}:generateContent",
+                                model
+                        )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("x-goog-api-key", apiKey)
+                        .body(requestBody)
+                        .retrieve()
+                        .body(String.class);
+
+            } catch (HttpServerErrorException.ServiceUnavailable e) {
+
+                // If this was the final attempt, propagate the error.
+                if (attempt == maxAttempts) {
+                    throw e;
+                }
+
+                try {
+
+                    // Wait 1 second before attempt 2,
+                    // 2 seconds before attempt 3.
+                    Thread.sleep(1000L * attempt);
+
+                } catch (InterruptedException interruptedException) {
+
+                    Thread.currentThread().interrupt();
+
+                    throw new IllegalStateException(
+                            "Gemini retry interrupted",
+                            interruptedException
+                    );
+                }
+            }
+        }
+
+        throw new IllegalStateException(
+                "Gemini request failed after retries"
+        );
     }
 }
