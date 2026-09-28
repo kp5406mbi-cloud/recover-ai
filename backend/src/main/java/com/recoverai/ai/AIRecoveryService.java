@@ -242,9 +242,10 @@ public class AIRecoveryService {
 
         } catch (Exception e) {
 
-            throw new IllegalStateException(
-                    "Failed to obtain Gemini recovery recommendation",
-                    e
+            return createFallbackRecommendation(
+                    payment,
+                    previousAttempts,
+                    maxAttempts
             );
         }
     }
@@ -300,5 +301,175 @@ public class AIRecoveryService {
         throw new IllegalStateException(
                 "Gemini request failed after retries"
         );
+    }
+
+    /**
+     * Deterministic fallback used when Gemini is unavailable,
+     * rate-limited, or returns an invalid response.
+     *
+     * The fallback only provides a recommendation.
+     * RecoveryDecisionService remains responsible for enforcing
+     * the actual recovery policy.
+     */
+    private AIRecoveryRecommendation createFallbackRecommendation(
+            Payment payment,
+            int previousAttempts,
+            int maxAttempts
+    ) {
+
+        AIRecoveryRecommendation recommendation =
+                new AIRecoveryRecommendation();
+
+        String failureReason = payment.getFailureReason();
+
+        /*
+         * Expired card:
+         * Do not retry automatically.
+         */
+        if ("EXPIRED_CARD".equalsIgnoreCase(failureReason)) {
+
+            recommendation.setDiagnosis(
+                    "The payment method has expired."
+            );
+
+            recommendation.setStrategy(
+                    "UPDATE_PAYMENT_METHOD"
+            );
+
+            recommendation.setConfidence(1.0);
+
+            recommendation.setRiskLevel(
+                    "MEDIUM"
+            );
+
+            recommendation.setRecommendedAction(
+                    "Ask the customer to update their payment method."
+            );
+
+            recommendation.setReasoning(
+                    "An expired payment method should be updated "
+                            + "before another payment attempt."
+            );
+
+            return recommendation;
+        }
+
+        /*
+         * Insufficient funds:
+         * Retry later if attempts are still available.
+         */
+        if ("INSUFFICIENT_FUNDS".equalsIgnoreCase(failureReason)) {
+
+            if (previousAttempts < maxAttempts) {
+
+                recommendation.setDiagnosis(
+                        "The payment failed because of insufficient funds."
+                );
+
+                recommendation.setStrategy(
+                        "RETRY_LATER"
+                );
+
+                recommendation.setConfidence(0.85);
+
+                recommendation.setRiskLevel(
+                        "LOW"
+                );
+
+                recommendation.setRecommendedAction(
+                        "Retry the payment after a delay."
+                );
+
+                recommendation.setReasoning(
+                        "Insufficient funds may be temporary, so a delayed "
+                                + "retry may recover the payment."
+                );
+
+            } else {
+
+                recommendation.setDiagnosis(
+                        "The payment failed because of insufficient funds "
+                                + "and the retry limit has been reached."
+                );
+
+                recommendation.setStrategy(
+                        "MANUAL_REVIEW"
+                );
+
+                recommendation.setConfidence(0.95);
+
+                recommendation.setRiskLevel(
+                        "HIGH"
+                );
+
+                recommendation.setRecommendedAction(
+                        "Stop automatic retries and escalate for manual review."
+                );
+
+                recommendation.setReasoning(
+                        "The maximum number of recovery attempts has been reached."
+                );
+            }
+
+            return recommendation;
+        }
+
+        /*
+         * Generic retryable failure.
+         */
+        if (previousAttempts < maxAttempts) {
+
+            recommendation.setDiagnosis(
+                    "The payment failed for a potentially retryable reason."
+            );
+
+            recommendation.setStrategy(
+                    "RETRY_LATER"
+            );
+
+            recommendation.setConfidence(0.70);
+
+            recommendation.setRiskLevel(
+                    "MEDIUM"
+            );
+
+            recommendation.setRecommendedAction(
+                    "Retry the payment according to the configured retry policy."
+            );
+
+            recommendation.setReasoning(
+                    "Gemini was unavailable, so the deterministic recovery "
+                            + "fallback was used."
+            );
+
+            return recommendation;
+        }
+
+        /*
+         * No retry attempts remaining.
+         */
+        recommendation.setDiagnosis(
+                "The payment cannot be recovered automatically."
+        );
+
+        recommendation.setStrategy(
+                "MANUAL_REVIEW"
+        );
+
+        recommendation.setConfidence(0.90);
+
+        recommendation.setRiskLevel(
+                "HIGH"
+        );
+
+        recommendation.setRecommendedAction(
+                "Escalate the payment for manual review."
+        );
+
+        recommendation.setReasoning(
+                "Gemini was unavailable and no automatic retry attempts remain."
+        );
+
+        return recommendation;
     }
 }
